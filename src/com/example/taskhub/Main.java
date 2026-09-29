@@ -50,7 +50,7 @@ public class Main {
         }
     }
     static void showMenu(){
-        System.out.println("1.添加任务");
+        System.out.println("1. 添加任务");
         System.out.println("2.查看任务");
         System.out.println("3.删除任务");
         System.out.println("4.搜索任务");
