@@ -4,7 +4,8 @@ import java.util.Scanner;
 
 public class Main {
     static void main(String[] args) {
-        String[] tasks =new String[10];
+
+        Task[] tasks =new Task[10];
         int taskCount = 0;
 
         Scanner scanner =new Scanner(System.in);
@@ -57,40 +58,48 @@ public class Main {
         System.out.println("0.退出");
     }
 
-    static int addTask(String[] tasks, int taskCount,Scanner scanner){
+    static int addTask(Task[] tasks, int taskCount, Scanner scanner) {
 
-        if(taskCount >= tasks.length){
+        if (taskCount >= tasks.length) {
             System.out.println("任务已满，不能继续添加");
             return taskCount;
         }
 
         System.out.println("请输入任务名称：");
         String title = scanner.nextLine();
-        if (title.isBlank()){
+
+        if (title.isBlank()) {
             System.out.println("任务名称不能为空");
             return taskCount;
         }
 
-        tasks[taskCount] = title;
-        taskCount++;
-        System.out.println("添加成功");
-        return  taskCount;
+        Task task = new Task();
 
+        task.title = title;
+        task.priority = 1;
+        task.status = "未开始";
+
+        tasks[taskCount] = task;
+        taskCount++;
+
+        System.out.println("添加成功");
+        return taskCount;
     }
 
-    static void showTask(String[] tasks,int taskCount){
+    static void showTask(Task[] tasks,int taskCount){
         if (taskCount == 0){
             System.out.println("暂无任务");
             return;
         }
 
         for(int i=0; i<taskCount; i++){
-            System.out.println((i+1) + "." + tasks[i]);
+            System.out.println("任务 " + (i + 1) + "：");
+            tasks[i].display();
             System.out.println();
         }
     }
 
-    static int deleteTask(String[] tasks, int taskCount, Scanner scanner){
+    static int deleteTask(Task[] tasks, int taskCount, Scanner scanner){
         if(taskCount==0){
             System.out.println("暂无任务可删除");
             return taskCount;
@@ -116,15 +125,16 @@ public class Main {
         return taskCount;
     }
 
-    static void searchTask(String[] tasks,int taskCount,Scanner scanner){
+    static void searchTask(Task[] tasks,int taskCount,Scanner scanner){
         System.out.println("请输入搜索关键词：");
         String keyWord = scanner.nextLine();
 
         boolean found = false;
 
         for (int i=0;i<taskCount;i++){
-            if(tasks[i].contains(keyWord)){
-                System.out.println((i+1) + "." + tasks[i]);
+            if(tasks[i].title.contains(keyWord)){
+                System.out.println("任务 " + (i + 1) + "：");
+                tasks[i].display();
                 found = true;
             }
         }
