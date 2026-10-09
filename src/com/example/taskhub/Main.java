@@ -3,7 +3,7 @@ package com.example.taskhub;
 import java.util.Scanner;
 
 public class Main {
-    static void main(String[] args) {
+    public static void main(String[] args) {
 
         Task[] tasks =new Task[10];
         int taskCount = 0;
@@ -73,16 +73,18 @@ public class Main {
             return taskCount;
         }
 
-        Task task = new Task();
+        try {
+            Task task = new Task(title, 1, "未开始");
 
-        task.title = title;
-        task.priority = 1;
-        task.status = "未开始";
+            tasks[taskCount] = task;
+            taskCount++;
 
-        tasks[taskCount] = task;
-        taskCount++;
+            System.out.println("添加成功");
 
-        System.out.println("添加成功");
+        } catch (IllegalArgumentException e) {
+            System.out.println("添加失败：" + e.getMessage());
+        }
+
         return taskCount;
     }
 
@@ -106,6 +108,13 @@ public class Main {
         }
 
         System.out.println("请输入要删除的任务序号：");
+
+        if (!scanner.hasNextInt()) {
+            System.out.println("请输入正确的数字！");
+            scanner.nextLine();
+            return taskCount;
+        }
+
         int number = scanner.nextInt();
         scanner.nextLine();
 
@@ -129,10 +138,15 @@ public class Main {
         System.out.println("请输入搜索关键词：");
         String keyWord = scanner.nextLine();
 
+        if (keyWord.isBlank()) {
+            System.out.println("搜索关键词不能为空");
+            return;
+        }
+
         boolean found = false;
 
         for (int i=0;i<taskCount;i++){
-            if(tasks[i].title.contains(keyWord)){
+            if(tasks[i].getTitle().contains(keyWord)){
                 System.out.println("任务 " + (i + 1) + "：");
                 tasks[i].display();
                 found = true;
