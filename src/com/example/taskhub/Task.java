@@ -1,7 +1,8 @@
 package com.example.taskhub;
 
 public class Task {
-
+    private final int id;
+    private static int nextId = 1;
     private String title;
     private int priority;
     private String status;
@@ -25,10 +26,16 @@ public class Task {
         this.title = title;
         this.priority = priority;
         this.status = status;
+        this.id = nextId;
+        nextId++;
     }
 
     public String getTitle() {
         return title;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void setTitle(String title) {
@@ -40,6 +47,7 @@ public class Task {
         this.title = title;
     }
     public void display() {
+        System.out.println("任务ID：" + id);
         System.out.println("任务名称：" + title);
         System.out.println("优先级：" + priority);
         System.out.println("任务状态：" + status);

@@ -3,9 +3,12 @@ package com.example.taskhub;
 import java.util.Scanner;
 
 public class Main {
+
+    private static final int MAX_TASKS = 10;
+
     public static void main(String[] args) {
 
-        Task[] tasks =new Task[10];
+        Task[] tasks =new Task[MAX_TASKS];
         int taskCount = 0;
 
         Scanner scanner =new Scanner(System.in);
