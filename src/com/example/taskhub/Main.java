@@ -4,14 +4,15 @@ import java.util.Scanner;
 
 public class Main {
 
-    private static final int MAX_TASKS = 10;
+
 
     public static void main(String[] args) {
 
-        Task[] tasks =new Task[MAX_TASKS];
-        int taskCount = 0;
+        TaskRepository repo = new InMemoryTaskRepository();
 
         Scanner scanner =new Scanner(System.in);
+
+
 
         while (true){
             showMenu();
@@ -29,19 +30,19 @@ public class Main {
 
             switch (choice){
                 case 1:
-                    taskCount = addTask(tasks,taskCount,scanner);
+                    addTask(repo, scanner);
                     break;
 
                 case 2:
-                    showTask(tasks,taskCount);
+                    showTask(repo);
                     break;
 
                 case 3:
-                    taskCount = deleteTask(tasks,taskCount,scanner);
+                    deleteTask(repo, scanner);
                     break;
 
                 case 4:
-                    searchTask(tasks,taskCount,scanner);
+                    searchTask(repo, scanner);
                     break;
 
                 case 0:
@@ -61,102 +62,71 @@ public class Main {
         System.out.println("0.退出");
     }
 
-    static int addTask(Task[] tasks, int taskCount, Scanner scanner) {
-
-        if (taskCount >= tasks.length) {
-            System.out.println("任务已满，不能继续添加");
-            return taskCount;
-        }
+    static void addTask(TaskRepository repo, Scanner scanner) {
 
         System.out.println("请输入任务名称：");
         String title = scanner.nextLine();
 
         if (title.isBlank()) {
             System.out.println("任务名称不能为空");
-            return taskCount;
+            return;
         }
 
         try {
             Task task = new Task(title, 1, "未开始");
 
-            tasks[taskCount] = task;
-            taskCount++;
+            boolean result = repo.add(task);
 
-            System.out.println("添加成功");
+            if (result) {
+                System.out.println("添加成功");
+            } else {
+                System.out.println("任务已满，添加失败");
+            }
 
         } catch (IllegalArgumentException e) {
             System.out.println("添加失败：" + e.getMessage());
         }
-
-        return taskCount;
     }
 
-    static void showTask(Task[] tasks,int taskCount){
-        if (taskCount == 0){
-            System.out.println("暂无任务");
-            return;
-        }
-
-        for(int i=0; i<taskCount; i++){
-            System.out.println("任务 " + (i + 1) + "：");
-            tasks[i].display();
-            System.out.println();
-        }
+    static void showTask(TaskRepository repo) {
+        repo.showAll();
     }
 
-    static int deleteTask(Task[] tasks, int taskCount, Scanner scanner){
-        if(taskCount==0){
-            System.out.println("暂无任务可删除");
-            return taskCount;
-        }
+    static void deleteTask(TaskRepository repo, Scanner scanner) {
 
         System.out.println("请输入要删除的任务序号：");
 
         if (!scanner.hasNextInt()) {
             System.out.println("请输入正确的数字！");
             scanner.nextLine();
-            return taskCount;
+            return;
         }
 
         int number = scanner.nextInt();
         scanner.nextLine();
 
-        int index = number-1;
-        if(index < 0 || index >= taskCount){
+        boolean result = repo.delete(number);
+
+        if (result) {
+            System.out.println("删除成功");
+        } else {
             System.out.println("任务序号不存在");
-            return taskCount;
         }
-
-        for (int i=index;i<taskCount-1;i++){
-            tasks[i]=tasks[i+1];
-        }
-
-        tasks[taskCount-1] = null;
-        taskCount--;
-        System.out.println("删除成功");
-        return taskCount;
     }
 
-    static void searchTask(Task[] tasks,int taskCount,Scanner scanner){
-        System.out.println("请输入搜索关键词：");
-        String keyWord = scanner.nextLine();
+    static void searchTask(TaskRepository repo, Scanner scanner) {
 
-        if (keyWord.isBlank()) {
+        System.out.println("请输入搜索关键词：");
+        String keyword = scanner.nextLine();
+
+        if (keyword.isBlank()) {
             System.out.println("搜索关键词不能为空");
             return;
         }
 
-        boolean found = false;
+        boolean found = repo.search(keyword);
 
-        for (int i=0;i<taskCount;i++){
-            if(tasks[i].getTitle().contains(keyWord)){
-                System.out.println("任务 " + (i + 1) + "：");
-                tasks[i].display();
-                found = true;
-            }
-        }
-
-        if(!found){
+        if (!found) {
             System.out.println("没有找到相关任务");
         }
     }
