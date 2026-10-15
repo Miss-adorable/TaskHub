@@ -47,6 +47,10 @@ public class Main {
                     searchTask(service, scanner);
                     break;
 
+                case 5:
+                    markTaskDone(service, scanner);
+                    break;
+
                 case 0:
                     System.out.println("退出程序");
                     return;
@@ -61,6 +65,7 @@ public class Main {
         System.out.println("2.查看任务");
         System.out.println("3.删除任务");
         System.out.println("4.搜索任务");
+        System.out.println("5.标记任务为 DONE");
         System.out.println("0.退出");
     }
 
@@ -123,6 +128,28 @@ public class Main {
 
         } catch (IllegalArgumentException e) {
             System.out.println("搜索失败：" + e.getMessage());
+        }
+    }
+
+    static void markTaskDone(TaskService service, Scanner scanner) {
+
+        System.out.println("请输入要标记完成的任务ID：");
+
+        if (!scanner.hasNextInt()) {
+            System.out.println("请输入正确的数字！");
+            scanner.nextLine();
+            return;
+        }
+
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        boolean result = service.markDone(id);
+
+        if (result) {
+            System.out.println("修改状态成功！");
+        } else {
+            System.out.println("修改状态失败！");
         }
     }
 

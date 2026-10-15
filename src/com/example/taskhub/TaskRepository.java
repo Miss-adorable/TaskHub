@@ -9,4 +9,8 @@ public interface TaskRepository {
     boolean delete(int number);
 
     boolean search(String keyword);
+
+    Task findById(int id);
+
+
 }

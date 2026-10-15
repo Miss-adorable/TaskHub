@@ -40,4 +40,21 @@ public class TaskService {
 
         return repo.search(keyword);
     }
+
+    public boolean markDone(int id) {
+
+        Task task = repo.findById(id);
+
+        if (task == null) {
+            return false;
+        }
+
+        if ("DONE".equals(task.getStatus())) {
+            return false;
+        }
+
+        task.setStatus("DONE");
+
+        return true;
+    }
 }

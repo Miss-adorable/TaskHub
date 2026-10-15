@@ -46,6 +46,15 @@ public class Task {
 
         this.title = title;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public void display() {
         System.out.println("任务ID：" + id);
         System.out.println("任务名称：" + title);

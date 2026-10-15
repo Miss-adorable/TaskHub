@@ -72,4 +72,14 @@ public class InMemoryTaskRepository implements TaskRepository {
 
         return found;
     }
+
+    @Override
+    public Task findById(int id) {
+        for (int i = 0; i < taskCount; i++) {
+            if (tasks[i].getId() == id) {
+                return tasks[i];
+            }
+        }
+        return null;
+    }
 }
