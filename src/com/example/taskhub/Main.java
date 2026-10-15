@@ -10,6 +10,8 @@ public class Main {
 
         TaskRepository repo = new InMemoryTaskRepository();
 
+        TaskService service = new TaskService(repo);
+
         Scanner scanner =new Scanner(System.in);
 
 
@@ -30,19 +32,19 @@ public class Main {
 
             switch (choice){
                 case 1:
-                    addTask(repo, scanner);
+                    addTask(service, scanner);
                     break;
 
                 case 2:
-                    showTask(repo);
+                    showTask(service);
                     break;
 
                 case 3:
-                    deleteTask(repo, scanner);
+                    deleteTask(service, scanner);
                     break;
 
                 case 4:
-                    searchTask(repo, scanner);
+                    searchTask(service, scanner);
                     break;
 
                 case 0:
@@ -62,20 +64,13 @@ public class Main {
         System.out.println("0.退出");
     }
 
-    static void addTask(TaskRepository repo, Scanner scanner) {
+    static void addTask(TaskService service, Scanner scanner) {
 
         System.out.println("请输入任务名称：");
         String title = scanner.nextLine();
 
-        if (title.isBlank()) {
-            System.out.println("任务名称不能为空");
-            return;
-        }
-
         try {
-            Task task = new Task(title, 1, "未开始");
-
-            boolean result = repo.add(task);
+            boolean result = service.addTask(title);
 
             if (result) {
                 System.out.println("添加成功");
@@ -88,11 +83,11 @@ public class Main {
         }
     }
 
-    static void showTask(TaskRepository repo) {
-        repo.showAll();
+    static void showTask(TaskService service) {
+        service.showAllTasks();
     }
 
-    static void deleteTask(TaskRepository repo, Scanner scanner) {
+    static void deleteTask(TaskService service, Scanner scanner) {
 
         System.out.println("请输入要删除的任务序号：");
 
@@ -105,7 +100,7 @@ public class Main {
         int number = scanner.nextInt();
         scanner.nextLine();
 
-        boolean result = repo.delete(number);
+        boolean result = service.deleteTask(number);
 
         if (result) {
             System.out.println("删除成功");
@@ -114,20 +109,20 @@ public class Main {
         }
     }
 
-    static void searchTask(TaskRepository repo, Scanner scanner) {
+    static void searchTask(TaskService service, Scanner scanner) {
 
         System.out.println("请输入搜索关键词：");
         String keyword = scanner.nextLine();
 
-        if (keyword.isBlank()) {
-            System.out.println("搜索关键词不能为空");
-            return;
-        }
+        try {
+            boolean found = service.searchTasks(keyword);
 
-        boolean found = repo.search(keyword);
+            if (!found) {
+                System.out.println("没有找到匹配的任务");
+            }
 
-        if (!found) {
-            System.out.println("没有找到相关任务");
+        } catch (IllegalArgumentException e) {
+            System.out.println("搜索失败：" + e.getMessage());
         }
     }
 
