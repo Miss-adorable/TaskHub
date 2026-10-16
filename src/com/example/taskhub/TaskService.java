@@ -8,13 +8,13 @@ public class TaskService {
         this.repo = repo;
     }
 
-    public boolean addTask(String title) {
+    public boolean addTask(String title, Priority priority) {
 
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("任务名称不能为空");
         }
 
-        Task task = new Task(title, 1, "未开始");
+        Task task = new Task(title, priority, TaskStatus.TODO);
 
         return repo.add(task);
     }
@@ -49,11 +49,11 @@ public class TaskService {
             return false;
         }
 
-        if ("DONE".equals(task.getStatus())) {
+        if (task.getStatus() == TaskStatus.DONE) {
             return false;
         }
 
-        task.setStatus("DONE");
+        task.setStatus(TaskStatus.DONE);
 
         return true;
     }

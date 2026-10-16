@@ -4,23 +4,21 @@ public class Task {
     private final int id;
     private static int nextId = 1;
     private String title;
-    private int priority;
-    private String status;
+    private Priority priority;
+    private TaskStatus status;
 
-    public Task(String title, int priority, String status) {
+    public Task(String title, Priority priority, TaskStatus status) {
 
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("任务名称不能为空");
         }
 
-        if (priority < 1 || priority > 3) {
-            throw new IllegalArgumentException("优先级必须在1到3之间");
+        if (priority == null) {
+            throw new IllegalArgumentException("优先级不能为空");
         }
 
-        if (!"未开始".equals(status)
-                && !"进行中".equals(status)
-                && !"已完成".equals(status)) {
-            throw new IllegalArgumentException("任务状态不合法");
+        if (status == null) {
+            throw new IllegalArgumentException("任务状态不能为空");
         }
 
         this.title = title;
@@ -47,11 +45,15 @@ public class Task {
         this.title = title;
     }
 
-    public String getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TaskStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("任务状态不能为空");
+        }
+
         this.status = status;
     }
 
@@ -59,6 +61,18 @@ public class Task {
         System.out.println("任务ID：" + id);
         System.out.println("任务名称：" + title);
         System.out.println("优先级：" + priority);
-        System.out.println("任务状态：" + status);
+        switch (status) {
+            case TODO:
+                System.out.println("任务状态：未开始");
+                break;
+
+            case IN_PROGRESS:
+                System.out.println("任务状态：进行中");
+                break;
+
+            case DONE:
+                System.out.println("任务状态：已完成");
+                break;
+        }
     }
 }

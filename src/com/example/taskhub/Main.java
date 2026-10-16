@@ -61,7 +61,7 @@ public class Main {
         }
     }
     static void showMenu(){
-        System.out.println("1. 添加任务 [NEW]");
+        System.out.println("1.添加任务");
         System.out.println("2.查看任务");
         System.out.println("3.删除任务");
         System.out.println("4.搜索任务");
@@ -74,8 +74,30 @@ public class Main {
         System.out.println("请输入任务名称：");
         String title = scanner.nextLine();
 
+        // ① 展示全部优先级
+        System.out.println("请选择任务优先级：");
+
+        for (Priority p : Priority.values()) {
+            System.out.println(p);
+        }
+
+        // ② 接收用户输入
+        System.out.println("请输入优先级：");
+        String input = scanner.nextLine().trim().toUpperCase();
+
+        // ③ 将 String 转换成 Priority
+        Priority priority;
+
         try {
-            boolean result = service.addTask(title);
+            priority = Priority.valueOf(input);
+        } catch (IllegalArgumentException e) {
+            System.out.println("优先级无效，请输入 HIGH、MEDIUM 或 LOW");
+            return;
+        }
+
+        // ④ 添加任务
+        try {
+            boolean result = service.addTask(title, priority);
 
             if (result) {
                 System.out.println("添加成功");
