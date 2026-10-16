@@ -23,13 +23,13 @@ public class TaskService {
         repo.showAll();
     }
 
-    public boolean deleteTask(int number) {
+    public boolean deleteTask(int id) {
 
-        if (number <= 0) {
+        if (id <= 0) {
             return false;
         }
 
-        return repo.delete(number);
+        return repo.removeById(id);
     }
 
     public boolean searchTasks(String keyword) {

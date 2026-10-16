@@ -56,7 +56,7 @@ public class Main {
                     return;
 
                 default:
-                    System.out.println("请输入0-4！");
+                    System.out.println("请输入0-5！");
             }
         }
     }
@@ -80,7 +80,7 @@ public class Main {
             if (result) {
                 System.out.println("添加成功");
             } else {
-                System.out.println("任务已满，添加失败");
+                System.out.println("添加失败");
             }
 
         } catch (IllegalArgumentException e) {
@@ -94,7 +94,7 @@ public class Main {
 
     static void deleteTask(TaskService service, Scanner scanner) {
 
-        System.out.println("请输入要删除的任务序号：");
+        System.out.println("请输入要删除的任务ID：");
 
         if (!scanner.hasNextInt()) {
             System.out.println("请输入正确的数字！");
@@ -102,15 +102,15 @@ public class Main {
             return;
         }
 
-        int number = scanner.nextInt();
+        int id = scanner.nextInt();
         scanner.nextLine();
 
-        boolean result = service.deleteTask(number);
+        boolean result = service.deleteTask(id);
 
         if (result) {
             System.out.println("删除成功");
         } else {
-            System.out.println("任务序号不存在");
+            System.out.println("任务ID不存在");
         }
     }
 

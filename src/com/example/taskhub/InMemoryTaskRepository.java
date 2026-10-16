@@ -1,53 +1,45 @@
 package com.example.taskhub;
+import java.util.List;
+import java.util.ArrayList;
 
 public class InMemoryTaskRepository implements TaskRepository {
 
-    private Task[] tasks = new Task[10];
-    private int taskCount = 0;
+    private List<Task> tasks = new ArrayList<>();
 
     @Override
     public boolean add(Task task) {
-
-        if (taskCount >= tasks.length) {
-            return false;
-        }
-
-        tasks[taskCount] = task;
-        taskCount++;
-
-        return true;
+        return tasks.add(task);
     }
 
     @Override
     public void showAll() {
 
-        if (taskCount == 0) {
+        if (tasks.isEmpty()) {
             System.out.println("暂无任务");
             return;
         }
 
-        for (int i = 0; i < taskCount; i++) {
-            tasks[i].display();
+        for (Task task : tasks) {
+            task.display();
         }
     }
 
     @Override
-    public boolean delete(int number) {
+    public boolean removeById(int id) {
 
-        int index = number - 1;
+        for (int i = 0; i < tasks.size(); i++) {
 
-        if (index < 0 || index >= taskCount) {
-            return false;
+            Task current = tasks.get(i);
+
+            if (current.getId() == id) {
+
+                tasks.remove(i);
+
+                return true;
+            }
         }
 
-        for (int i = index; i < taskCount - 1; i++) {
-            tasks[i] = tasks[i + 1];
-        }
-
-        tasks[taskCount - 1] = null;
-        taskCount--;
-
-        return true;
+        return false;
     }
 
     @Override
@@ -59,12 +51,14 @@ public class InMemoryTaskRepository implements TaskRepository {
 
         boolean found = false;
 
-        for (int i = 0; i < taskCount; i++) {
+        for (int i = 0; i < tasks.size(); i++) {
 
-            if (tasks[i].getTitle().contains(keyword)) {
+            Task current = tasks.get(i);
 
-                System.out.println("任务 " + (i + 1) + "：");
-                tasks[i].display();
+            if (current.getTitle().contains(keyword)) {
+
+                System.out.println("任务ID：" + current.getId());
+                current.display();
 
                 found = true;
             }
@@ -75,11 +69,14 @@ public class InMemoryTaskRepository implements TaskRepository {
 
     @Override
     public Task findById(int id) {
-        for (int i = 0; i < taskCount; i++) {
-            if (tasks[i].getId() == id) {
-                return tasks[i];
+
+        for (Task task : tasks) {
+
+            if (task.getId() == id) {
+                return task;
             }
         }
+
         return null;
     }
 }

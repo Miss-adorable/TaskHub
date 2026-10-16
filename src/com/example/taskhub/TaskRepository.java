@@ -6,7 +6,7 @@ public interface TaskRepository {
 
     void showAll();
 
-    boolean delete(int number);
+    boolean removeById(int id);
 
     boolean search(String keyword);
 
