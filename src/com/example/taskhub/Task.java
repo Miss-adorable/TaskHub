@@ -1,4 +1,6 @@
 package com.example.taskhub;
+import java.util.Set;
+import java.util.HashSet;
 
 public class Task {
     private final int id;
@@ -6,6 +8,7 @@ public class Task {
     private String title;
     private Priority priority;
     private TaskStatus status;
+    private Set<String> tags = new HashSet<>();
 
     public Task(String title, Priority priority, TaskStatus status) {
 
@@ -73,6 +76,43 @@ public class Task {
             case DONE:
                 System.out.println("任务状态：已完成");
                 break;
+        }
+        System.out.println("任务标签：");
+        showTags();
+    }
+
+    public boolean addTag(String tag) {
+        if (tag == null || tag.isBlank()) {
+            return false;
+        }
+
+        return tags.add(tag.trim());
+    }
+
+    public boolean removeTag(String tag) {
+        if (tag == null || tag.isBlank()) {
+            return false;
+        }
+
+        return tags.remove(tag.trim());
+    }
+
+    public boolean hasTag(String tag) {
+        if (tag == null || tag.isBlank()) {
+            return false;
+        }
+
+        return tags.contains(tag.trim());
+    }
+
+    public void showTags() {
+        if (tags.isEmpty()) {
+            System.out.println("暂无标签");
+            return;
+        }
+
+        for (String tag : tags) {
+            System.out.println(tag);
         }
     }
 }

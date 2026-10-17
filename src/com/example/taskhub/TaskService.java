@@ -57,4 +57,35 @@ public class TaskService {
 
         return true;
     }
+
+    public boolean addTagToTask(int id, String tag) {
+        Task task = repo.findById(id);
+
+        if (task == null) {
+            return false;
+        }
+
+        return task.addTag(tag);
+    }
+
+    public boolean removeTagFromTask(int id, String tag) {
+        Task task = repo.findById(id);
+
+        if (task == null) {
+            return false;
+        }
+
+        return task.removeTag(tag);
+    }
+
+    public boolean hasTagInTask(int id, String tag) {
+        Task task = repo.findById(id);
+
+        if (task == null) {
+            return false;
+        }
+
+        return task.hasTag(tag);
+    }
+
 }

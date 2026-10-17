@@ -1,4 +1,5 @@
 package com.example.taskhub;
+import java.util.List;
 
 public interface TaskRepository {
 
@@ -11,6 +12,8 @@ public interface TaskRepository {
     boolean search(String keyword);
 
     Task findById(int id);
+
+    List<Task> findAll();
 
 
 }

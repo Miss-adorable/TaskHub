@@ -1,25 +1,41 @@
 package com.example.taskhub;
+import java.util.Map;
+import java.util.HashMap;
+
 import java.util.List;
 import java.util.ArrayList;
 
 public class InMemoryTaskRepository implements TaskRepository {
 
-    private List<Task> tasks = new ArrayList<>();
+    private Map<Integer, Task> taskById = new HashMap<>();
 
     @Override
     public boolean add(Task task) {
-        return tasks.add(task);
+
+        if (task == null) {
+            return false;
+        }
+
+        int id = task.getId();
+
+        if (taskById.containsKey(id)) {
+            return false;
+        }
+
+        taskById.put(id, task);
+
+        return true;
     }
 
     @Override
     public void showAll() {
 
-        if (tasks.isEmpty()) {
+        if (taskById.isEmpty()) {
             System.out.println("暂无任务");
             return;
         }
 
-        for (Task task : tasks) {
+        for (Task task : taskById.values()) {
             task.display();
         }
     }
@@ -27,19 +43,9 @@ public class InMemoryTaskRepository implements TaskRepository {
     @Override
     public boolean removeById(int id) {
 
-        for (int i = 0; i < tasks.size(); i++) {
+        Task removed = taskById.remove(id);
 
-            Task current = tasks.get(i);
-
-            if (current.getId() == id) {
-
-                tasks.remove(i);
-
-                return true;
-            }
-        }
-
-        return false;
+        return removed != null;
     }
 
     @Override
@@ -51,9 +57,7 @@ public class InMemoryTaskRepository implements TaskRepository {
 
         boolean found = false;
 
-        for (int i = 0; i < tasks.size(); i++) {
-
-            Task current = tasks.get(i);
+        for (Task current : taskById.values()) {
 
             if (current.getTitle().contains(keyword)) {
 
@@ -69,14 +73,11 @@ public class InMemoryTaskRepository implements TaskRepository {
 
     @Override
     public Task findById(int id) {
+        return taskById.get(id);
+    }
 
-        for (Task task : tasks) {
-
-            if (task.getId() == id) {
-                return task;
-            }
-        }
-
-        return null;
+    @Override
+    public List<Task> findAll() {
+        return new ArrayList<>(taskById.values());
     }
 }
