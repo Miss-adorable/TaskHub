@@ -11,7 +11,7 @@ public class TaskService {
     public boolean addTask(String title, Priority priority) {
 
         if (title == null || title.isBlank()) {
-            throw new IllegalArgumentException("任务名称不能为空");
+            throw new InvalidTaskException("任务名称不能为空");
         }
 
         Task task = new Task(title, priority, TaskStatus.TODO);
@@ -26,10 +26,14 @@ public class TaskService {
     public boolean deleteTask(int id) {
 
         if (id <= 0) {
-            return false;
+            throw new InvalidTaskException("任务ID必须大于0");
         }
 
-        return repo.removeById(id);
+        if (!repo.removeById(id)) {
+            throw new TaskNotFoundException("任务ID不存在");
+        }
+
+        return true;
     }
 
     public boolean searchTasks(String keyword) {
@@ -43,10 +47,14 @@ public class TaskService {
 
     public boolean markDone(int id) {
 
+        if (id <= 0) {
+            throw new InvalidTaskException("任务ID必须大于0");
+        }
+
         Task task = repo.findById(id);
 
         if (task == null) {
-            return false;
+            throw new TaskNotFoundException("任务ID不存在");
         }
 
         if (task.getStatus() == TaskStatus.DONE) {

@@ -119,6 +119,9 @@ public class Main {
                 System.out.println("添加失败");
             }
 
+        } catch (InvalidTaskException e) {
+            System.out.println("添加失败：" + e.getMessage());
+
         } catch (IllegalArgumentException e) {
             System.out.println("添加失败：" + e.getMessage());
         }
@@ -141,12 +144,15 @@ public class Main {
         int id = scanner.nextInt();
         scanner.nextLine();
 
-        boolean result = service.deleteTask(id);
-
-        if (result) {
+        try {
+            service.deleteTask(id);
             System.out.println("删除成功");
-        } else {
-            System.out.println("任务ID不存在");
+
+        } catch (TaskNotFoundException e) {
+            System.out.println("删除失败：" + e.getMessage());
+
+        } catch (InvalidTaskException e) {
+            System.out.println("删除失败：" + e.getMessage());
         }
     }
 
@@ -180,12 +186,20 @@ public class Main {
         int id = scanner.nextInt();
         scanner.nextLine();
 
-        boolean result = service.markDone(id);
+        try {
+            boolean result = service.markDone(id);
 
-        if (result) {
-            System.out.println("修改状态成功！");
-        } else {
-            System.out.println("修改状态失败！");
+            if (result) {
+                System.out.println("修改状态成功！");
+            } else {
+                System.out.println("任务已经是DONE状态！");
+            }
+
+        } catch (TaskNotFoundException e) {
+            System.out.println("修改状态失败：" + e.getMessage());
+
+        } catch (InvalidTaskException e) {
+            System.out.println("修改状态失败：" + e.getMessage());
         }
     }
 
