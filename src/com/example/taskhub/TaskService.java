@@ -1,4 +1,7 @@
 package com.example.taskhub;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 public class TaskService {
 
@@ -94,6 +97,20 @@ public class TaskService {
         }
 
         return task.hasTag(tag);
+    }
+
+    public List<Task> findHighPriorityTasks() {
+
+        return repo.findAll().stream()
+                .filter(task -> task.getPriority() == Priority.HIGH)
+                .toList();
+    }
+
+    public List<Task> findTasksSortedByPriority() {
+
+        return repo.findAll().stream()
+                .sorted(Comparator.comparing(task -> task.getPriority()))
+                .toList();
     }
 
 }

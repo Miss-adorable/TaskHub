@@ -60,6 +60,10 @@ public class Task {
         this.status = status;
     }
 
+    public Priority getPriority() {
+        return priority;
+    }
+
     public void display() {
         System.out.println("任务ID：" + id);
         System.out.println("任务名称：" + title);

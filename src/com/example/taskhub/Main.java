@@ -1,6 +1,7 @@
 package com.example.taskhub;
 
 import java.util.Scanner;
+import java.util.List;
 
 public class Main {
 
@@ -63,12 +64,20 @@ public class Main {
                     checkTaskTag(service, scanner);
                     break;
 
+                case 9:
+                    showHighPriorityTasks(service);
+                    break;
+
+                case 10:
+                    showSortedTasks(service);
+                    break;
+
                 case 0:
                     System.out.println("退出程序");
                     return;
 
                 default:
-                    System.out.println("请输入0-8！");
+                    System.out.println("请输入0-10！");
             }
         }
     }
@@ -81,6 +90,8 @@ public class Main {
         System.out.println("6.添加任务标签");
         System.out.println("7.删除任务标签");
         System.out.println("8.查询任务标签");
+        System.out.println("9.查看HIGH优先级任务");
+        System.out.println("10.按优先级排序查看任务");
         System.out.println("0.退出");
     }
     static void addTask(TaskService service, Scanner scanner) {
@@ -275,6 +286,34 @@ public class Main {
             System.out.println("该任务存在此标签！");
         } else {
             System.out.println("该任务不存在此标签，或任务ID不存在！");
+        }
+    }
+
+    static void showHighPriorityTasks(TaskService service) {
+
+        List<Task> tasks = service.findHighPriorityTasks();
+
+        if (tasks.isEmpty()) {
+            System.out.println("暂无HIGH优先级任务");
+            return;
+        }
+
+        for (Task task : tasks) {
+            task.display();
+        }
+    }
+
+    static void showSortedTasks(TaskService service) {
+
+        List<Task> tasks = service.findTasksSortedByPriority();
+
+        if (tasks.isEmpty()) {
+            System.out.println("暂无任务");
+            return;
+        }
+
+        for (Task task : tasks) {
+            task.display();
         }
     }
 
