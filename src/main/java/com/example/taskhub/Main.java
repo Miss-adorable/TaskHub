@@ -3,19 +3,40 @@ package com.example.taskhub;
 import java.util.Scanner;
 import java.util.List;
 
+import java.nio.file.Path;
+import java.io.IOException;
+
 public class Main {
-
-
 
     public static void main(String[] args) {
 
         TaskRepository repo = new InMemoryTaskRepository();
 
+        JsonTaskFileStore store = new JsonTaskFileStore(
+                Path.of("data", "tasks.json")
+        );
+
+// 启动时加载历史任务
+        try {
+            List<Task> savedTasks = store.load();
+
+            for (Task task : savedTasks) {
+                if (!repo.add(task)) {
+                    throw new IllegalStateException("任务文件存在重复ID或空任务");
+                }
+            }
+
+            System.out.println("已加载 " + savedTasks.size() + " 个任务");
+
+        } catch (IOException | IllegalStateException e) {
+            System.out.println("任务加载失败：" + e.getMessage());
+            System.out.println("为保护原文件，程序停止启动");
+            return;
+        }
+
         TaskService service = new TaskService(repo);
 
         Scanner scanner =new Scanner(System.in);
-
-
 
         while (true){
             showMenu();
@@ -73,8 +94,16 @@ public class Main {
                     break;
 
                 case 0:
-                    System.out.println("退出程序");
-                    return;
+                    try {
+                        store.save(repo.findAll());
+                        System.out.println("任务保存成功，退出程序");
+                        return;
+
+                    } catch (IOException e) {
+                        System.out.println("任务保存失败：" + e.getMessage());
+                        System.out.println("请检查文件问题后重新尝试退出");
+                        break;
+                    }
 
                 default:
                     System.out.println("请输入0-10！");
@@ -316,8 +345,6 @@ public class Main {
             task.display();
         }
     }
-
-
 
 }
 

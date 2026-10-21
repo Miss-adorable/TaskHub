@@ -2,6 +2,9 @@ package com.example.taskhub;
 import java.util.Set;
 import java.util.HashSet;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Task {
     private final int id;
     private static int nextId = 1;
@@ -11,6 +14,15 @@ public class Task {
     private Set<String> tags = new HashSet<>();
 
     public Task(String title, Priority priority, TaskStatus status) {
+        this(nextId, title, priority, status);
+        nextId++;
+    }
+
+    private Task(int id, String title, Priority priority, TaskStatus status) {
+
+        if (id <= 0) {
+            throw new IllegalArgumentException("任务ID必须大于0");
+        }
 
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("任务名称不能为空");
@@ -24,11 +36,34 @@ public class Task {
             throw new IllegalArgumentException("任务状态不能为空");
         }
 
+        this.id = id;
         this.title = title;
         this.priority = priority;
         this.status = status;
-        this.id = nextId;
-        nextId++;
+    }
+
+    @JsonCreator
+    public static Task restore(
+            @JsonProperty("id") int id,
+            @JsonProperty("title") String title,
+            @JsonProperty("priority") Priority priority,
+            @JsonProperty("status") TaskStatus status,
+            @JsonProperty("tags") Set<String> tags
+    ) {
+        // 保留你之前写好的方法内部代码
+        Task task = new Task(id, title, priority, status);
+
+        if (tags != null) {
+            for (String tag : tags) {
+                if (!task.addTag(tag)) {
+                    throw new IllegalArgumentException("无效的任务标签");
+                }
+            }
+        }
+
+        nextId = Math.max(nextId, id + 1);
+
+        return task;
     }
 
     public String getTitle() {
@@ -37,6 +72,10 @@ public class Task {
 
     public int getId() {
         return id;
+    }
+
+    public Set<String> getTags() {
+        return new HashSet<>(tags);
     }
 
     public void setTitle(String title) {
