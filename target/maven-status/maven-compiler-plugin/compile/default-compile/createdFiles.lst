@@ -10,10 +10,12 @@ com/example/taskhub/InMemoryTaskRepository.class
 com/example/taskhub/InvalidTaskException.class
 com/example/taskhub/experiments/inheritance/TaskItem.class
 com/example/taskhub/TaskStatus.class
+com/example/taskhub/experiments/io/FailureDemo.class
 com/example/taskhub/experiments/inheritance/InheritanceDemo.class
 com/example/taskhub/JsonTaskFileStore.class
 com/example/taskhub/Main.class
 com/example/taskhub/TaskRepository.class
 com/example/taskhub/TaskService.class
+com/example/taskhub/experiments/io/SafeSaveDemo.class
 com/example/taskhub/Task$1.class
 com/example/taskhub/TaskNotFoundException.class
