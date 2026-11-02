@@ -29,7 +29,8 @@ public class JacksonDemo {
                 "阅读论文",
                 Priority.HIGH,
                 TaskStatus.TODO,
-                Set.of("科研")
+                Set.of("科研"),
+                null
         );
 
         System.out.println("恢复任务ID：" + restored.getId());

@@ -2,6 +2,9 @@ package com.example.taskhub;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TaskServiceTest {
@@ -83,4 +86,38 @@ public class TaskServiceTest {
         assertTrue(result);
         assertEquals(TaskStatus.DONE, task.getStatus());
     }
+
+
+    @Test
+    void findOverdueTasks_success() {
+
+        // Arrange：准备测试环境
+        TaskRepository repo = new InMemoryTaskRepository();
+        TaskService service = new TaskService(repo);
+
+        LocalDate today = LocalDate.of(2026, 11, 2);
+
+        // 准备不同情况的任务
+        repo.add(new Task("任务A", Priority.HIGH, TaskStatus.TODO,
+                LocalDate.of(2026, 11, 1)));
+
+        repo.add(new Task("任务B", Priority.HIGH, TaskStatus.TODO,
+                LocalDate.of(2026, 11, 5)));
+
+        repo.add(new Task("任务C", Priority.HIGH, TaskStatus.DONE,
+                LocalDate.of(2026, 10, 30)));
+
+        repo.add(new Task("任务D", Priority.HIGH, TaskStatus.TODO));
+
+        repo.add(new Task("任务E", Priority.HIGH, TaskStatus.TODO,
+                LocalDate.of(2026, 11, 2)));
+
+        // Act：筛选逾期任务
+        List<Task> result = service.findOverdueTasks(today);
+
+        // Assert：检查筛选结果
+        assertEquals(1, result.size());
+        assertEquals("任务A", result.get(0).getTitle());
+    }
+
 }

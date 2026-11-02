@@ -1,7 +1,10 @@
+
 package com.example.taskhub;
 
 import java.util.Scanner;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 import java.nio.file.Path;
 import java.io.IOException;
@@ -58,7 +61,7 @@ public class Main {
                     break;
 
                 case 2:
-                    showTask(service);
+                    showTask(repo);
                     break;
 
                 case 3:
@@ -93,6 +96,10 @@ public class Main {
                     showSortedTasks(service);
                     break;
 
+                case 11:
+                    showOverdueTasks(service);
+                    break;
+
                 case 0:
                     try {
                         store.save(repo.findAll());
@@ -106,7 +113,7 @@ public class Main {
                     }
 
                 default:
-                    System.out.println("请输入0-10！");
+                    System.out.println("请输入0-11！");
             }
         }
     }
@@ -121,6 +128,7 @@ public class Main {
         System.out.println("8.查询任务标签");
         System.out.println("9.查看HIGH优先级任务");
         System.out.println("10.按优先级排序查看任务");
+        System.out.println("11.查看逾期未完成任务");
         System.out.println("0.退出");
     }
     static void addTask(TaskService service, Scanner scanner) {
@@ -149,9 +157,23 @@ public class Main {
             return;
         }
 
-        // ④ 添加任务
+        // ④ 输入截止日期：直接回车表示没有截止日期
+        System.out.println("请输入截止日期（yyyy-MM-dd，直接回车表示无截止日期）：");
+        String dateInput = scanner.nextLine().trim();
+        LocalDate dueDate = null;
+
         try {
-            boolean result = service.addTask(title, priority);
+            if (!dateInput.isBlank()) {
+                dueDate = LocalDate.parse(dateInput);
+            }
+        } catch (DateTimeParseException e) {
+            System.out.println("日期格式不合法，请输入 yyyy-MM-dd，例如 2026-11-05");
+            return;
+        }
+
+        // ⑤ 添加任务
+        try {
+            boolean result = service.addTask(title, priority, dueDate);
 
             if (result) {
                 System.out.println("添加成功");
@@ -167,8 +189,17 @@ public class Main {
         }
     }
 
-    static void showTask(TaskService service) {
-        service.showAllTasks();
+    static void showTask(TaskRepository repo) {
+        List<Task> tasks = repo.findAll();
+
+        if (tasks.isEmpty()) {
+            System.out.println("暂无任务");
+            return;
+        }
+
+        for (Task task : tasks) {
+            displayTaskWithDueDate(task);
+        }
     }
 
     static void deleteTask(TaskService service, Scanner scanner) {
@@ -328,7 +359,7 @@ public class Main {
         }
 
         for (Task task : tasks) {
-            task.display();
+            displayTaskWithDueDate(task);
         }
     }
 
@@ -342,9 +373,30 @@ public class Main {
         }
 
         for (Task task : tasks) {
-            task.display();
+            displayTaskWithDueDate(task);
         }
     }
 
-}
 
+    static void showOverdueTasks(TaskService service) {
+        List<Task> tasks = service.findOverdueTasks(LocalDate.now());
+
+        if (tasks.isEmpty()) {
+            System.out.println("暂无逾期未完成任务");
+            return;
+        }
+
+        System.out.println("逾期未完成任务：");
+        for (Task task : tasks) {
+            displayTaskWithDueDate(task);
+        }
+    }
+
+    // 在 Main 中补充日期展示，不必修改原来的 Task.display()。
+    static void displayTaskWithDueDate(Task task) {
+        task.display();
+        System.out.println("截止日期：" +
+                (task.getDueDate() == null ? "未设置" : task.getDueDate()));
+        System.out.println("------------------------");
+    }
+}

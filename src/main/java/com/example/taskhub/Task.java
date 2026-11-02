@@ -1,6 +1,7 @@
 package com.example.taskhub;
 import java.util.Set;
 import java.util.HashSet;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,11 +12,17 @@ public class Task {
     private String title;
     private Priority priority;
     private TaskStatus status;
+    private LocalDate dueDate;
     private Set<String> tags = new HashSet<>();
 
     public Task(String title, Priority priority, TaskStatus status) {
         this(nextId, title, priority, status);
         nextId++;
+    }
+
+    public Task(String title, Priority priority, TaskStatus status, LocalDate dueDate) {
+        this(title, priority, status);
+        this.dueDate = dueDate;
     }
 
     private Task(int id, String title, Priority priority, TaskStatus status) {
@@ -48,10 +55,12 @@ public class Task {
             @JsonProperty("title") String title,
             @JsonProperty("priority") Priority priority,
             @JsonProperty("status") TaskStatus status,
-            @JsonProperty("tags") Set<String> tags
+            @JsonProperty("tags") Set<String> tags,
+            @JsonProperty("dueDate") LocalDate dueDate
     ) {
         // 保留你之前写好的方法内部代码
         Task task = new Task(id, title, priority, status);
+        task.dueDate = dueDate;
 
         if (tags != null) {
             for (String tag : tags) {
@@ -76,6 +85,10 @@ public class Task {
 
     public Set<String> getTags() {
         return new HashSet<>(tags);
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
     }
 
     public void setTitle(String title) {

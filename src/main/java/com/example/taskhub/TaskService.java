@@ -1,4 +1,5 @@
 package com.example.taskhub;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -11,13 +12,24 @@ public class TaskService {
         this.repo = repo;
     }
 
+    // 旧方法：兼容以前的代码
     public boolean addTask(String title, Priority priority) {
+        return addTask(title, priority, null);
+    }
+
+    // 新方法：支持截止日期
+    public boolean addTask(String title, Priority priority, LocalDate dueDate) {
 
         if (title == null || title.isBlank()) {
             throw new InvalidTaskException("任务名称不能为空");
         }
 
-        Task task = new Task(title, priority, TaskStatus.TODO);
+        Task task = new Task(
+                title,
+                priority,
+                TaskStatus.TODO,
+                dueDate
+        );
 
         return repo.add(task);
     }
@@ -112,5 +124,16 @@ public class TaskService {
                 .sorted(Comparator.comparing(task -> task.getPriority()))
                 .toList();
     }
+
+
+    public List<Task> findOverdueTasks(LocalDate today) {
+
+        return repo.findAll().stream()
+                .filter(task -> task.getDueDate() != null)
+                .filter(task -> task.getDueDate().isBefore(today))
+                .filter(task -> task.getStatus() != TaskStatus.DONE)
+                .toList();
+    }
+
 
 }
