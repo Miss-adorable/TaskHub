@@ -15,7 +15,7 @@ import java.time.LocalDate;
 
 public class JdbcQueryDemo {
 
-    private static Task mapRow(ResultSet rs) throws SQLException {
+    static Task mapRow(ResultSet rs) throws SQLException {
 
         // 1. 读取基本字段
         int id = rs.getInt("id");
