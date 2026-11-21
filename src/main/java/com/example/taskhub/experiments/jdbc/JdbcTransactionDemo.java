@@ -132,7 +132,7 @@ public class JdbcTransactionDemo {
 //                    "Day40回滚测试用户"
 //            );
 
-            System.out.println("注册成功，用户ID：" + userId);
+          //  System.out.println("注册成功，用户ID：" + userId);
             System.out.println("autoCommit状态：" + conn.getAutoCommit());
         }
     }

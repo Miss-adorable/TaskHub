@@ -25,7 +25,7 @@ public class Main {
             List<Task> savedTasks = store.load();
 
             for (Task task : savedTasks) {
-                if (!repo.add(task)) {
+                if (repo.add(task) == null) {
                     throw new IllegalStateException("任务文件存在重复ID或空任务");
                 }
             }

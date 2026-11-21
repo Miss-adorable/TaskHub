@@ -75,6 +75,29 @@ public class Task {
         return task;
     }
 
+    public static Task fromDatabase(
+            int id,
+            String title,
+            Priority priority,
+            TaskStatus status,
+            Set<String> tags,
+            LocalDate dueDate
+    ) {
+        Task task = new Task(id, title, priority, status);
+
+        task.dueDate = dueDate;
+
+        if (tags != null) {
+            for (String tag : tags) {
+                if (!task.addTag(tag)) {
+                    throw new IllegalArgumentException("无效的任务标签");
+                }
+            }
+        }
+
+        return task;
+    }
+
     public String getTitle() {
         return title;
     }

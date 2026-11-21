@@ -31,7 +31,9 @@ public class TaskService {
                 dueDate
         );
 
-        return repo.add(task);
+        Task savedTask = repo.add(task);
+
+        return savedTask != null;
     }
 
     public void showAllTasks() {
@@ -78,6 +80,10 @@ public class TaskService {
 
         task.setStatus(TaskStatus.DONE);
 
+        if (!repo.update(task)) {
+            throw new TaskNotFoundException("更新失败，任务可能已不存在");
+        }
+
         return true;
     }
 
@@ -88,7 +94,13 @@ public class TaskService {
             return false;
         }
 
-        return task.addTag(tag);
+        boolean changed = task.addTag(tag);
+
+        if (!changed) {
+            return false;
+        }
+
+        return repo.update(task);
     }
 
     public boolean removeTagFromTask(int id, String tag) {
@@ -98,7 +110,13 @@ public class TaskService {
             return false;
         }
 
-        return task.removeTag(tag);
+        boolean changed = task.removeTag(tag);
+
+        if (!changed) {
+            return false;
+        }
+
+        return repo.update(task);
     }
 
     public boolean hasTagInTask(int id, String tag) {
