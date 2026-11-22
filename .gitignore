@@ -33,3 +33,8 @@ out/
 *.iml
 .DS_Store
 /target/
+
+# Database credentials
+.env
+.env.*
+!.env.example

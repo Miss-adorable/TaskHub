@@ -13,29 +13,73 @@ public class Main {
 
     public static void main(String[] args) {
 
-        TaskRepository repo = new InMemoryTaskRepository();
+        boolean jdbcMode;
+
+        if (args.length == 0) {
+            jdbcMode = false;
+
+        } else if (args.length == 1
+                && "--storage=jdbc".equals(args[0])) {
+            jdbcMode = true;
+
+        } else {
+            System.out.println(
+                    "启动参数错误：请不传参数或使用 --storage=jdbc"
+            );
+            return;
+        }
+
+        TaskRepository repo;
+
+        if (jdbcMode) {
+
+            // 1. 创建 JDBC Repository 对象
+            JdbcTaskRepository jdbcRepo = new JdbcTaskRepository(1);
+
+            // 2. 启动时检查数据库连接
+            try {
+                jdbcRepo.checkConnection();
+                System.out.println("MySQL 数据库连接成功");
+
+            } catch (IllegalStateException e) {
+                System.out.println("TaskHub 启动失败：" + e.getMessage());
+                return;
+            }
+
+            // 3. 连接成功后，使用 JDBC Repository
+            repo = jdbcRepo;
+
+        } else {
+
+            // 不指定 JDBC 模式，继续使用内存 Repository
+            repo = new InMemoryTaskRepository();
+        }
 
         JsonTaskFileStore store = new JsonTaskFileStore(
                 Path.of("data", "tasks.json")
         );
 
-// 启动时加载历史任务
+// 只有内存模式才读取 JSON
+        if (!jdbcMode) {
 
-        try {
-            List<Task> savedTasks = store.load();
+            try {
+                List<Task> savedTasks = store.load();
 
-            for (Task task : savedTasks) {
-                if (repo.add(task) == null) {
-                    throw new IllegalStateException("任务文件存在重复ID或空任务");
+                for (Task task : savedTasks) {
+                    if (repo.add(task) == null) {
+                        throw new IllegalStateException(
+                                "任务文件存在重复ID或空任务"
+                        );
+                    }
                 }
+
+                System.out.println("已加载 " + savedTasks.size() + " 个任务");
+
+            } catch (IOException | IllegalStateException e) {
+                System.out.println("任务加载失败：" + e.getMessage());
+                System.out.println("为保护原文件，程序停止启动");
+                return;
             }
-
-            System.out.println("已加载 " + savedTasks.size() + " 个任务");
-
-        } catch (IOException | IllegalStateException e) {
-            System.out.println("任务加载失败：" + e.getMessage());
-            System.out.println("为保护原文件，程序停止启动");
-            return;
         }
 
         TaskService service = new TaskService(repo);
@@ -102,6 +146,14 @@ public class Main {
                     break;
 
                 case 0:
+
+                    // JDBC 模式：数据已保存在 MySQL，直接退出
+                    if (jdbcMode) {
+                        System.out.println("退出程序，数据已保存至 MySQL");
+                        return;
+                    }
+
+                    // 内存模式：退出时保存到 JSON 文件
                     try {
                         store.save(repo.findAll());
                         System.out.println("任务保存成功，退出程序");

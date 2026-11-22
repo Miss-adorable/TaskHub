@@ -24,16 +24,56 @@ public class JdbcTaskRepository implements TaskRepository {
 
     private Connection openConnection() throws SQLException {
 
-        String url = System.getenv("TASKHUB_DB_URL");
-        String username = System.getenv("TASKHUB_DB_USER");
-        String password = System.getenv("TASKHUB_DB_PASSWORD");
+        // 1. 读取环境变量
+        String url = System.getenv("DB_URL");
+        String username = System.getenv("DB_USER");
+        String password = System.getenv("DB_PASSWORD");
 
+        // 2. 检查数据库地址
+        if (url == null || url.isBlank()) {
+            throw new IllegalStateException(
+                    "缺少数据库环境变量：DB_URL"
+            );
+        }
+
+        // 3. 检查数据库用户名
+        if (username == null || username.isBlank()) {
+            throw new IllegalStateException(
+                    "缺少数据库环境变量：DB_USER"
+            );
+        }
+
+        // 4. 检查数据库密码
+        if (password == null || password.isBlank()) {
+            throw new IllegalStateException(
+                    "缺少数据库环境变量：DB_PASSWORD"
+            );
+        }
+
+        // 5. 建立数据库连接
         return DriverManager.getConnection(
                 url,
                 username,
                 password
         );
     }
+
+    public void checkConnection() {
+
+        try (Connection conn = openConnection()) {
+
+            // 连接成功，无需执行 SQL
+            // try-with-resources 会自动关闭连接
+
+        } catch (SQLException e) {
+
+            throw new IllegalStateException(
+                    "数据库连接失败，请检查配置和 MySQL 服务状态",
+                    e
+            );
+        }
+    }
+
     @Override
     public Task findById(int id) {
 
